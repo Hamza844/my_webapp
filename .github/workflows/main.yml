@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # Ya jo bhi tumhari main branch hai
+      - main  # Or your main branch
 
 jobs:
   deploy:
@@ -32,11 +32,11 @@ jobs:
             fi
 
             # Folders ke naam lowercase mein change karna
-            mv Full_MERN_Stack_Ecommerce_Project/frontend full_mern_stack_ecommerce_project/frontend
-            mv Full_MERN_Stack_Ecommerce_Project/backend full_mern_stack_ecommerce_project/backend
-            mv Full_MERN_Stack_Ecommerce_Project/admin full_mern_stack_ecommerce_project/admin
+            mv /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/Frontend /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/frontend
+            mv /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/Backend /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/backend
+            mv /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/Admin /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/admin
 
             # Docker Compose Run Karo
-            cd /home/ubuntu/full_mern_stack_ecommerce_project
-            docker compose up -d --build
+            cd /home/ubuntu/Full_MERN_Stack_Ecommerce_Project
+            docker-compose up -d --build
           EOF
