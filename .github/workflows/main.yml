@@ -1,0 +1,42 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  # Ya jo bhi tumhari main branch hai
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 3.212.156.90 >> ~/.ssh/known_hosts
+
+      - name: SSH into Server and Deploy
+        run: |
+          ssh ubuntu@3.212.156.90 << 'EOF'
+            cd /home/ubuntu || exit
+
+            # Agar repo pehle se hai, to pull karo warna clone karo
+            if [ ! -d "Full_MERN_Stack_Ecommerce_Project/.git" ]; then
+              git clone https://github.com/Hamza844/Full_MERN_Stack_Ecommerce_Project.git
+            else
+              cd Full_MERN_Stack_Ecommerce_Project
+              git reset --hard
+              git pull origin main
+            fi
+
+            # Folders ke naam lowercase mein change karna
+            mv Full_MERN_Stack_Ecommerce_Project/frontend full_mern_stack_ecommerce_project/frontend
+            mv Full_MERN_Stack_Ecommerce_Project/backend full_mern_stack_ecommerce_project/backend
+            mv Full_MERN_Stack_Ecommerce_Project/admin full_mern_stack_ecommerce_project/admin
+
+            # Docker Compose Run Karo
+            cd /home/ubuntu/full_mern_stack_ecommerce_project
+            docker compose up -d --build
+          EOF
