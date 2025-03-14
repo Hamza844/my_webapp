@@ -1,42 +1,40 @@
-name: Deploy to EC2
+name: Deploy to GCP
 
 on:
   push:
     branches:
-      - main  # Or your main branch
+      - main  # Jab bhi main branch pe push hoga, deployment trigger hoga
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.GCP_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 3.212.156.90 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 34.150.155.48 >> ~/.ssh/known_hosts
 
-      - name: SSH into Server and Deploy
+      - name: Deploy to GCP Server
         run: |
-          ssh ubuntu@3.212.156.90 << 'EOF'
-            cd /home/ubuntu || exit
-
-            # Agar repo pehle se hai, to pull karo warna clone karo
-            if [ ! -d "Full_MERN_Stack_Ecommerce_Project/.git" ]; then
-              git clone https://github.com/Hamza844/Full_MERN_Stack_Ecommerce_Project.git
+          ssh student-02-584409c29cbb@34.150.155.48 << 'EOF'
+            cd ~
+            
+            # Agar repo pehle se hai to update karo, warna clone karo
+            if [ ! -d "my_webapp/.git" ]; then
+              git clone https://github.com/Hamza844/my_webapp.git
             else
-              cd Full_MERN_Stack_Ecommerce_Project
+              cd my_webapp
               git reset --hard
               git pull origin main
             fi
 
-            # Folders ke naam lowercase mein change karna
-            mv /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/Frontend /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/frontend
-            mv /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/Backend /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/backend
-            mv /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/Admin /home/ubuntu/Full_MERN_Stack_Ecommerce_Project/admin
-
             # Docker Compose Run Karo
-            cd /home/ubuntu/Full_MERN_Stack_Ecommerce_Project
-            docker-compose up -d --build
+            cd ~/my_webapp
+            docker compose up -d --build
           EOF
