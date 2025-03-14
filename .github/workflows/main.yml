@@ -10,22 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Step 2: Setup SSH Key
       - name: Setup SSH Key
         run: |
+          # SSH key setup
           mkdir -p ~/.ssh
-          echo "${{ secrets.GCP_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          
+          # Save the private key from GitHub Secrets
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+
+          # Add the server's SSH host to known hosts to avoid host verification prompts
           ssh-keyscan -H 34.150.155.48 >> ~/.ssh/known_hosts
 
+      # Step 3: Deploy to GCP Server (via SSH)
       - name: Deploy to GCP Server
         run: |
           ssh student-02-584409c29cbb@34.150.155.48 << 'EOF'
+            # Navigate to home directory
             cd ~
-            
-            # Agar repo pehle se hai to update karo, warna clone karo
+
+            # Clone the repository or pull the latest changes if already cloned
             if [ ! -d "my_webapp/.git" ]; then
               git clone https://github.com/Hamza844/my_webapp.git
             else
@@ -34,8 +43,7 @@ jobs:
               git pull origin main
             fi
 
-            # Docker Compose Run Karo
+            # Run Docker Compose to build and start the containers
             cd ~/my_webapp
             docker compose up -d --build
           EOF
-##testing
