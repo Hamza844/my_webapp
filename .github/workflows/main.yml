@@ -25,12 +25,12 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
           # Add the server's SSH host to known hosts to avoid host verification prompts
-          ssh-keyscan -H 34.150.155.48 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 52.201.165.246 >> ~/.ssh/known_hosts
 
       # Step 3: Deploy to GCP Server (via SSH)
-      - name: Deploy to GCP Server
+      - name: Deploy to EC2 server
         run: |
-          ssh student-02-584409c29cbb@34.150.155.48 << 'EOF'
+          ssh student-02-584409c29cbb@52.201.165.246 << 'EOF'
             # Navigate to home directory
             cd ~
 
