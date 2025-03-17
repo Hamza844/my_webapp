@@ -48,3 +48,4 @@ jobs:
             docker compose up -d --build
           EOF 
 #check this
+#now run
