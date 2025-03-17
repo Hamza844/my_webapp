@@ -38,13 +38,13 @@ jobs:
             if [ ! -d "my_webapp/.git" ]; then
               git clone https://github.com/Hamza844/my_webapp.git
             else
-              cd my_webapp
+              cd /home/ubuntu/my_webapp
               git reset --hard
               git pull origin main
             fi
 
             # Run Docker Compose to build and start the containers
-            cd ~/my_webapp
+            cd /home/ubuntu/my_webapp
             docker compose up -d --build
           EOF 
 #check this
